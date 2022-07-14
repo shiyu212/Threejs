@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>测试</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+    <script src="http://www.yanhuangxueyuan.com/versions/threejsR92/build/three.js"></script>
+</head>
+<body>
+<script>
+    // 对于背景 天空盒之类非动态的对象直接添加环境贴图
+    var scene = new THREE.Scene();
+
+    var geometry = new THREE.BoxGeometry(100, 100, 100); //立方体
+
+    var loader = new THREE.CubeTextureLoader();
+    // 所有贴图在同一目录下，可以使用该方法设置共用路径
+    // 立方体纹理加载器返回立方体纹理对象CubeTexture
+    var CubeTexture = loader.load(['2.jpg', '2.jpg', '2.jpg', '2.jpg', '2.jpg', '2.jpg']);
+    //材质对象Material
+    var material = new THREE.MeshPhongMaterial({
+        //网格模型设置颜色，网格模型颜色和环境贴图会进行融合计算
+        // color:0xff0000,
+        envMap: CubeTexture, //设置环境贴图
+        // 环境贴图反射率   控制环境贴图对被渲染三维模型影响程度
+        // reflectivity: 0.1,
+    });
+    console.log(CubeTexture.image);
+    var mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
+    scene.add(mesh); //网格模型添加到场景中
+
+    var point = new THREE.PointLight(0xffffff);
+    point.position.set(100, 200, 200);
+    scene.add(point);
+
+    var ambient = new THREE.AmbientLight(0x444444);
+    scene.add(ambient);
+
+    var width = window.innerWidth;
+    var height = window.innerHeight;
+    var k = width / height;
+
+    var s = 400;
+    var camera = new THREE.OrthographicCamera(-s * k, s * k, s, -s, 1, 1000);
+    camera.position.set(100, 100, 100);
+    camera.lookAt(scene.position);
+
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize(width, height);
+    renderer.setClearColor(0xb9d3ff, 1);
+    document.body.appendChild(renderer.domElement);
+
+    let T0 = new Date();
+    function render() {
+        let T1 = new Date();
+        let t = T1 - T0;
+        T0 = T1;
+        renderer.render(scene, camera);
+        // mesh.rotateY(0.001 * t);
+        requestAnimationFrame(render);
+    }
+    render()
+</script>
+</body>
+
+</html>

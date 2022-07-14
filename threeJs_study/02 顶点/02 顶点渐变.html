@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>第一个three.js文件_WebGL三维场景</title>
+	<style>
+		body {
+			margin: 0;
+			overflow: hidden;
+		}
+	</style>
+	<script src="http://www.yanhuangxueyuan.com/versions/threejsR92/build/three.js"></script>
+</head>
+
+<body>
+	<script>
+		var scene = new THREE.Scene();
+
+		var geometry = new THREE.BoxGeometry(100, 100, 100); //创建一个立方体几何对象Geometry
+		// 遍历几何体的face属性
+		geometry.faces.forEach(face => {
+			// 设置三角面face三个顶点的颜色
+			face.vertexColors = [
+				new THREE.Color(0xaaccbb),
+				new THREE.Color(0xbfabfa),
+				new THREE.Color(0xbebebe),
+			]
+		});
+		geometry.translate(100, 0, 0);
+
+		function changeColor() {
+			const colorList = [0xbfabfa, 0xabcabc, 0xffffff]
+			let color = colorList[Math.round(Math.random() * 2)]
+			var material = new THREE.MeshBasicMaterial({
+				color: color
+				// vertexColors: new THREE.Color(0xaaccbb),
+				// wireframe:true,//线框模式渲染
+			}); //材质对象Material
+			var mesh = new THREE.Mesh(geometry, material);
+			scene.add(mesh);
+		}
+
+		changeColor()
+		var point = new THREE.PointLight(0xffffff);
+		point.position.set(100, 200, 200);
+		scene.add(point);
+
+		var ambient = new THREE.AmbientLight(0x444444);
+		scene.add(ambient);
+
+		var width = window.innerWidth;
+		var height = window.innerHeight;
+		var k = width / height;
+
+		var s = 400;
+		var camera = new THREE.OrthographicCamera(-s * k, s * k, s, -s, 1, 1000);
+		camera.position.set(100, 100, 100);
+		camera.lookAt(scene.position);
+
+		var renderer = new THREE.WebGLRenderer();
+		renderer.setSize(width, height);
+		renderer.setClearColor(0xb9d3ff, 1);
+		document.body.appendChild(renderer.domElement);
+
+		let T0 = new Date();
+		let x = 0
+		function render() {
+			let T1 = new Date();
+			let t = T1 - T0;
+			T0 = T1;
+			// console.log (x);
+			if( x++ % 100 === 0){
+				changeColor()
+			}
+			renderer.render(scene, camera);
+			// geometry.translate(100, 0, 0);
+			// mesh.rotateY(0.02 * Math.random() * t);
+			// mesh.rotateX(0.01 * Math.random() * t);
+			requestAnimationFrame(render);
+		}
+		render()
+	</script>
+</body>
+
+</html>

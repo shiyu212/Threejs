@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>第一个three.js文件_WebGL三维场景</title>
+	<style>
+		body {
+			margin: 0;
+			overflow: hidden;
+		}
+	</style>
+	<script src="http://www.yanhuangxueyuan.com/versions/threejsR92/build/three.js"></script>
+</head>
+
+<body>
+	<script>
+		var scene = new THREE.Scene();
+
+		// 纹理贴图映射到一个矩形平面上
+		var geometry = new THREE.BoxGeometry(100, 100, 100); //立方体
+		
+		// TextureLoader创建一个纹理加载器对象，可以加载图片作为几何体纹理
+		var textureLoader = new THREE.TextureLoader();
+		// 执行load方法，加载纹理贴图成功后，返回一个纹理对象Texture
+		textureLoader.load('https://img0.baidu.com/it/u=2711708968,2360640534&fm=253&fmt=auto&app=138&f=JPEG?w=332&h=500', function (texture) {
+			texture.wrapT = THREE.RepeatWrapping;
+			// uv两个方向纹理重复数量
+			texture.repeat.set(2, 2);
+			texture.offset = new THREE.Vector2(0.4, 0.1)
+			// 设置纹理旋转角度
+			// texture.rotation = Math.PI / 4;
+			// 设置纹理的旋转中心，默认(0,0)
+			// texture.center.set(0.5, 0.5);
+			var material = new THREE.MeshLambertMaterial({
+				// color: 0x0000ff,
+				// 设置颜色纹理贴图：Texture对象作为材质map属性的属性值
+				map: texture,//设置颜色贴图属性值
+			}); //材质对象Material
+
+			// 使用纹理贴图阵列 来给不同的面渲染贴图
+			var mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
+			scene.add(mesh); //网格模型添加到场景中
+
+			// 光源设置
+			var point = new THREE.PointLight(0xffffff);
+			point.position.set(100, 200, 200);
+			scene.add(point);
+			var ambient = new THREE.AmbientLight(0x444444);
+			scene.add(ambient);
+
+			// 相机位置设置
+			var width = window.innerWidth;
+			var height = window.innerHeight;
+			var k = width / height;
+			var s = 200;
+			var camera = new THREE.OrthographicCamera(-s * k, s * k, s, -s, 1, 1000);
+			camera.position.set(100, 100, 100);
+			camera.lookAt(scene.position);
+
+			var renderer = new THREE.WebGLRenderer();
+			renderer.setSize(width, height);
+			renderer.setClearColor(0xb9d3ff, 1);
+			document.body.appendChild(renderer.domElement);
+
+			let T0 = new Date();
+			function render() {
+				let T1 = new Date();
+				let t = T1 - T0;
+				T0 = T1;
+				renderer.render(scene, camera);
+                // 设置纹理的运动
+                texture.offset.y += 0.005
+				if(texture.offset.y === 50){
+					texture.offset.y = 0
+				}
+				requestAnimationFrame(render);
+			}
+			render()
+		})
+	</script>
+</body>
+
+</html>

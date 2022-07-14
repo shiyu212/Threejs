@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>第一个three.js文件_WebGL三维场景</title>
+	<style>
+		body {
+			margin: 0;
+			overflow: hidden;
+		}
+	</style>
+	<script src="http://www.yanhuangxueyuan.com/versions/threejsR92/build/three.js"></script>
+	<script src="../js/OrbitControls.js"></script>
+</head>
+
+<body>
+	<script>
+		var scene = new THREE.Scene();
+
+		var geometry = new THREE.BoxGeometry(100, 100, 100); //创建一个立方体几何对象Geometry
+		var material = new THREE.MeshStandardMaterial({
+			color: 0x00aaff
+		});
+		var mesh = new THREE.Mesh(geometry, material);
+		mesh.translateX(-200);//网格模型mesh平移
+		var mesh1 = mesh.clone()
+		mesh1.translateX(200);//网格模型mesh平移
+		scene.add(mesh1, mesh);
+
+		var point = new THREE.PointLight(0xffffff);
+		point.position.set(100,200,200)
+		scene.add(point);
+
+		var ambient = new THREE.AmbientLight(0x444444);
+		scene.add(ambient);
+
+		var width = window.innerWidth;
+		var height = window.innerHeight;
+		var k = width / height;
+
+		var s = 200;
+		var camera = new THREE.OrthographicCamera(-s * k, s * k, s, -s, 1, 1000);
+		camera.position.set(100, 100, 100);
+		camera.lookAt(scene.position);
+
+		var renderer = new THREE.WebGLRenderer();
+		renderer.setSize(width, height);
+		renderer.setClearColor(0xb9d3ff, 1);
+		document.body.appendChild(renderer.domElement);
+
+		let T0 = new Date();
+		function render() {
+			let T1 = new Date();
+			let t = T1 - T0;
+			T0 = T1;
+			renderer.render(scene, camera);
+			mesh.rotateY(0.001 * t);
+			mesh1.rotateY(-0.001 * t);
+			requestAnimationFrame(render);
+		}
+		var controls = new THREE.OrbitControls(camera, renderer.domElement);//创建控件对象
+		render()
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+    <script src="js/three.js"></script>
+    <script src="js/OrbitControls.js"></script>
+</head>
+
+<body>
+    <script>
+        const scene = new THREE.Scene()
+        const loader = new THREE.FontLoader();
+        loader.load('fonts/helvetiker_regular.typeface.json', function (font) {
+            const geometry = new THREE.TextGeometry('Hello three.js!', {
+                font: font,
+                size: 80,
+                height: 5,
+                curveSegments: 12,
+                bevelEnabled: true,
+                bevelThickness: 10,
+                bevelSize: 8,
+                bevelSegments: 5
+            });
+            const plane = new THREE.Mesh(
+                geometry,
+                new THREE.MeshBasicMaterial({ color: 0xbfabfa })
+            );
+            // plane.rotateX(Math.PI / 2);
+            scene.add(plane);
+        });
+
+
+
+        var point = new THREE.PointLight(0xffffff);
+        point.position.set(1000, 1000, 1000); //点光源位置
+        scene.add(point); //点光源添加到场景中
+
+        var camera = new THREE.PerspectiveCamera(
+            800,                                     // Field of view
+            window.innerWidth / window.innerHeight, // Aspect ratio
+            0.1,                                    // Near clipping pane
+            1000                                    // Far clipping pane
+        );
+        camera.position.set(380, 40, 440);
+        camera.lookAt(scene.position);
+
+        renderer = new THREE.WebGLRenderer({ antialias: true });//设置为抗锯齿
+        renderer.setSize(window.innerWidth, window.innerHeight);//设置渲染区域尺寸
+        renderer.setClearColor(0xffffff, 1);                 //设置背景颜色
+        document.body.appendChild(renderer.domElement);         //body元素中插入canvas对象
+
+        //执行渲染操作   
+        function render() {
+            renderer.render(scene, camera);
+            requestAnimationFrame(render);
+        }
+        render();
+    </script>
+</body>
+
+</html>
